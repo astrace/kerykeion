@@ -6,7 +6,7 @@
 
 import logging
 from requests import Request
-from requests_cache import CachedSession
+from requests_cache import CachedSession, SQLiteCache
 from typing import Union
 
 logging.basicConfig(
@@ -34,12 +34,9 @@ class FetchGeonames:
         logger: Union[logging.Logger, None] = None
     ):
 
-        self.session = CachedSession(
-            cache_name='cache/kerykeion_geonames_cache',
-            backend='sqlite',
-            expire_after=86400
-        )
-
+        backend = SQLiteCache(timeout=30, use_temp=True)
+        self.session = CachedSession(backend=backend)
+        
         self.username = username
         self.city_name = city_name
         self.country_code = country_code
